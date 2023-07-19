@@ -1,12 +1,24 @@
 import jwt from 'jsonwebtoken';
+import axios from 'axios';
 
-export default function handler(req, res) {
-  const { accessToken } = req.body;
+export default async function validate(req, res) {
+  const { accessToken, refreshToken } = req.body;
 
-  try {
-    jwt.verify(accessToken, 'your-access-token-secret');
+  if(jwt.verify(accessToken, 'your-access-token-secret')) 
+  {
     res.json({ valid: true });
-  } catch (error) {
-    res.json({ valid: false });
+  } 
+  else {
+    
+    try {
+      
+      const response = await axios.post('/api/refreshtoken', { refreshToken });
+      const { accessToken: newAccessToken } = response.data;
+      res.json({ valid: true, newAccessToken });
+    } 
+    catch (error) {
+      res.json({ valid: false });
+    }
   }
 }
+

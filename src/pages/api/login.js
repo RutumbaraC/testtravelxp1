@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-export default function handler(req, res) {
+export default function login(req, res) {
   const { mobileNumber } = req.body;
 
   const accessToken = jwt.sign({ mobileNumber }, 'your-access-token-secret', {
